@@ -1,0 +1,12 @@
+## read the data
+## http://blog.sina.com.cn/s/blog_73e6125c0100yxzt.html helped me to understand the meaning of some of the parameters in read.table()
+myData <- read.table("household_power_consumption.txt", header = TRUE, sep = ";", colClasses = c(Date = "character", Time = "character", rep("numeric", 7)), stringsAsFactors = FALSE, na.strings = '?')
+## add a column of the time (time format)
+TimeFormat <- strptime(paste(myData[,"Date"], myData[,"Time"], sep = ", "), format = "%d/%m/%Y, %H:%M:%S")
+myData <- cbind(myData, TimeFormat)
+## subset the two days of the whole data
+myData <- myData[myData$TimeFormat >= as.POSIXct("2007-02-01 00:00:00") & myData$TimeFormat < as.POSIXct("2007-02-03 00:00:00"), ]
+## plot
+png(filename = 'plot1.png', width = 480, height = 480, units = 'px')
+hist(myData[, "Global_active_power"], main = "Global Active Power", xlab = "Global Active Power(kilowatts)", col = "red")
+dev.off()
